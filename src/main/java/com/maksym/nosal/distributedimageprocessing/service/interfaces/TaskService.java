@@ -6,6 +6,6 @@ import com.maksym.nosal.distributedimageprocessing.model.TaskStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface TaskService {
-    String CreateAndSubmitTask(TaskSubmissionDto taskSubmissionDto, MultipartFile imageFile);
+    String CreateAndSubmitTask(TaskSubmissionDto taskSubmissionDto, MultipartFile imageFile) throws Exception;
     TaskStatusDto getTaskStatus(String taskId);
 }

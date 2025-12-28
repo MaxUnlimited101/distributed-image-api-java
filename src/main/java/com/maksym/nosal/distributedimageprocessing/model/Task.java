@@ -2,21 +2,21 @@ package com.maksym.nosal.distributedimageprocessing.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+@Setter
 @Getter
 @Entity
+@Table(name = "task")
 public class Task {
     @Id
     private String id;
 
-    @Setter
     private TaskStatus status;
 
-    @Setter
     private String errorMessage;
 
-    @Setter
     private String resultUri;
 }
