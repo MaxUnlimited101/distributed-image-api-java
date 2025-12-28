@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name = "task")
 public class Task {
     @Id
     private String id;
