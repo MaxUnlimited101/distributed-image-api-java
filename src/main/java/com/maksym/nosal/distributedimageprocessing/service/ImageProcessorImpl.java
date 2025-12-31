@@ -24,6 +24,8 @@ public class ImageProcessorImpl implements ImageProcessor {
             default -> builder.size(640, 480);
         }
 
+        builder.outputFormat("jpg");
+        builder.scale(1);
         builder.toOutputStream(outputStream);
         return outputStream.toByteArray();
     }

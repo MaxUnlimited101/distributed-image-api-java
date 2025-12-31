@@ -29,7 +29,9 @@ public class ImageWorker {
     @Scheduled(fixedDelay = 1000)
     public void pullAndProcess() {
         String message = redisTemplate.opsForList().leftPop("image_tasks_queue");
-        if (message == null) return;
+        if (message == null) {
+            return;
+        }
 
         var dto = objectMapper.readValue(message, TaskSubmissionDto.class);
 
@@ -40,13 +42,13 @@ public class ImageWorker {
         try {
             processedData = imageProcessor.process(original, dto.action(), dto.width(), dto.height());
         } catch (Exception e) {
-            taskRepository.updateTaskStatus(dto.s3ImageKey(), TaskStatus.FAILED);
+            taskRepository.updateTaskStatus(dto.s3ImageKey(), TaskStatus.FAILED, null, e.getMessage());
             throw new RuntimeException(e);
         }
 
         String resultKey = imageRepository.upload("processed-" + dto.s3ImageKey(),
                 new ByteArrayInputStream(processedData), processedData.length, "image/*");
 
-        taskRepository.updateTaskStatus(dto.s3ImageKey(), TaskStatus.COMPLETED);
+        taskRepository.updateTaskStatus(dto.s3ImageKey(), TaskStatus.COMPLETED, resultKey, null);
     }
 }

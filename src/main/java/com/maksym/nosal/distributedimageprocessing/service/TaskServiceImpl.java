@@ -15,12 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
-    private static final String QUEUE_NAME = "TASK_QUEUE";
+    private static final String QUEUE_NAME = "image_tasks_queue";
     private final TaskRepository taskRepository;
     private final StringRedisTemplate redisTemplate;
     private final ImageRepository imageRepository;
@@ -54,5 +55,14 @@ public class TaskServiceImpl implements TaskService {
     private void SubmitTask(TaskSubmissionDto taskSubmissionDto) {
         String message = objectMapper.writeValueAsString(taskSubmissionDto);
         redisTemplate.opsForList().rightPush(QUEUE_NAME, message);
+    }
+
+    @Override
+    public InputStream getTaskResult(String taskId) {
+        Task task = taskRepository.getTaskById(taskId);
+        if (task == null || task.getResultUri() == null) {
+            throw new IllegalArgumentException("Task not found or result not available");
+        }
+        return imageRepository.download(task.getResultUri());
     }
 }
