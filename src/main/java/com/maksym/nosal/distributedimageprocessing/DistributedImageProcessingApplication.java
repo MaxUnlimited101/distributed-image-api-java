@@ -11,8 +11,10 @@ public class DistributedImageProcessingApplication {
         SpringApplication app = new SpringApplication(DistributedImageProcessingApplication.class);
 
         String profile = System.getProperty("spring.profiles.active");
-        if (profile.contains("worker")) {
-            app.setWebApplicationType(WebApplicationType.NONE);
+        if (profile != null) {
+            if (profile.contains("worker")) {
+                app.setWebApplicationType(WebApplicationType.NONE);
+            }
         }
 
         app.run(args);

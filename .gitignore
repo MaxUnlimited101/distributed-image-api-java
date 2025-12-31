@@ -35,3 +35,12 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Mac ###
+.DS_Store
+
+.env
+
+## other files ###
+some-requests.http
+coala.jpg
