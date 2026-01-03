@@ -35,8 +35,18 @@ public class ImageWorker {
 
         var dto = objectMapper.readValue(message, TaskSubmissionDto.class);
 
-        InputStream original = imageRepository.download(dto.s3ImageKey());
+        InputStream original;
+        try {
+            original = imageRepository.download(dto.s3ImageKey());
+        } catch (Exception e) {
+            taskRepository.updateTaskStatus(dto.s3ImageKey(), TaskStatus.FAILED, null, e.getMessage());
+            throw new RuntimeException(e);
+        }
 
+        if (original == null) {
+            taskRepository.updateTaskStatus(dto.s3ImageKey(), TaskStatus.FAILED, null, "Error");
+            return;
+        }
 
         byte[] processedData = null;
         try {
@@ -46,9 +56,14 @@ public class ImageWorker {
             throw new RuntimeException(e);
         }
 
-        String resultKey = imageRepository.upload("processed-" + dto.s3ImageKey(),
-                new ByteArrayInputStream(processedData), processedData.length, "image/*");
+        try {
+            String resultKey = imageRepository.upload("processed-" + dto.s3ImageKey(),
+                    new ByteArrayInputStream(processedData), processedData.length, "image/*");
 
-        taskRepository.updateTaskStatus(dto.s3ImageKey(), TaskStatus.COMPLETED, resultKey, null);
+            taskRepository.updateTaskStatus(dto.s3ImageKey(), TaskStatus.COMPLETED, resultKey, null);
+        } catch (Exception e) {
+            taskRepository.updateTaskStatus(dto.s3ImageKey(), TaskStatus.FAILED, null, e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 }

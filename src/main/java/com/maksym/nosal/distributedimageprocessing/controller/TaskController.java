@@ -28,8 +28,15 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping("/status/{taskId}")
-    public TaskStatusDto getTaskStatus(@PathVariable String taskId) {
-        return taskService.getTaskStatus(taskId);
+    public ResponseEntity<?> getTaskStatus(@PathVariable String taskId) {
+        var status = taskService.getTaskStatus(taskId);
+
+        if (status == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Task not found"));
+        }
+
+        return ResponseEntity.ok(status);
     }
 
     @PostMapping("/submit")

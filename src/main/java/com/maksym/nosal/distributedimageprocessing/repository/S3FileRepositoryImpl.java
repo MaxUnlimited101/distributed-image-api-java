@@ -21,7 +21,7 @@ import java.util.UUID;
 public class S3FileRepositoryImpl implements ImageRepository {
 
     private final S3Client s3Client;
-    
+
     @Value("${s3.bucket.name}")
     private String bucketName;
 
@@ -60,7 +60,11 @@ public class S3FileRepositoryImpl implements ImageRepository {
                 .key(fileKey)
                 .build();
 
-        return s3Client.getObject(getObjectRequest);
+        try {
+            return s3Client.getObject(getObjectRequest);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override

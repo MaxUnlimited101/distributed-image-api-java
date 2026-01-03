@@ -34,11 +34,11 @@ public class TaskServiceImpl implements TaskService {
         var randomUUID = UUID.randomUUID().toString();
         task.setId(randomUUID);
         task.setStatus(TaskStatus.PENDING);
-        task = taskRepository.save(task);
 
         var key = imageRepository.upload(randomUUID, imageFile.getInputStream(),
                 imageFile.getSize(), imageFile.getContentType());
 
+        task = taskRepository.save(task);
         SubmitTask(taskSubmissionDto.withS3ImageKey(key));
         return task.getId();
     }
@@ -47,7 +47,7 @@ public class TaskServiceImpl implements TaskService {
     public TaskStatusDto getTaskStatus(String taskId) {
         var t = taskRepository.getTaskById(taskId);
         if (t == null) {
-            return new TaskStatusDto(null, TaskStatus.FAILED, "Task not found");
+            return null;
         }
         return new TaskStatusDto(t.getResultUri(), t.getStatus(), t.getErrorMessage());
     }
