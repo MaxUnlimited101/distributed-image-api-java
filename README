@@ -1,0 +1,5 @@
+To run you must have Docker and Kubernetes running.
+After enabling Docker and K8s simply run:
+```bash
+./deploy-local.sh
+```
