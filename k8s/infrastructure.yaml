@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: image-processing
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: image-processing
+data:
+  DB_URL: "jdbc:postgresql://postgres:5432/db_image"
+  DB_USERNAME: "postgres"
+  DB_PASSWORD: "postgres"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  AWS_ACCESS_KEY_ID: "minioadmin"
+  AWS_SECRET_ACCESS_KEY: "minioadmin"
+  AWS_REGION: "eu-west-1"
+  AWS_ENDPOINT_URL: "http://minio:9000"
+  S3_BUCKET_NAME: "image-processing"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: image-processing
+spec:
+  type: ExternalName
+  externalName: host.docker.internal 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: image-processing
+spec:
+  type: ExternalName
+  externalName: host.docker.internal 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  namespace: image-processing
+spec:
+  type: ExternalName
+  externalName: host.docker.internal 
